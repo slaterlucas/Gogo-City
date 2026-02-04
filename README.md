@@ -2,41 +2,58 @@
 
 A mobile app that generates personalized city routes (quests) based on user preferences.
 
-## Setup
+---
+
+## Quickstart
+
+### 1. Install Docker
+
+Download and install Docker Desktop:
+- **Mac**: https://www.docker.com/products/docker-desktop/
+- Click "Download for Mac" and run the installer
+- Open Docker Desktop after installing (wait for it to say "Running")
+
+### 2. Install uv (Python package manager)
 
 ```bash
-# Start Postgres
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Then restart your terminal.
+
+### 3. Clone the repo
+
+```bash
+git clone https://github.com/cwreller/Gogo-City.git
+cd Gogo-City
+```
+
+### 4. Run it
+
+```bash
+# Start the database
 docker-compose up -d
 
-# Install dependencies (uses uv)
+# Install dependencies
 uv sync
 
-# Run migrations
+# Set up the database tables
 uv run alembic upgrade head
-
-# Start dev server
-uv run uvicorn app.main:app --reload
 ```
 
-## Common Commands
+Done! The database is running and ready.
+
+---
+
+## Useful Commands
 
 ```bash
-# Add a dependency
-uv add <package>
-
-# Add a dev dependency
-uv add --dev <package>
-
-# Run any command in the venv
-uv run <command>
-
-# Stop Postgres
+# Stop the database
 docker-compose down
+
+# Add a new Python package
+uv add <package-name>
+
+# Run any Python command
+uv run <command>
 ```
-
-## Features
-
-- Personalized route generation based on budget, distance, time, and vibe preferences
-- Shareable route templates
-- Independent progress tracking per user
-- Check-in system for stops
