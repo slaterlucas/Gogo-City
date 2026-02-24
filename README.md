@@ -151,3 +151,20 @@ Currently: Tasks are unordered (user does them in any order)
 - At scale with 1000s of users, costs add up
 - Do we cache similar preference combos?
 - Switch to cheaper model (gpt-4o-mini) for some users?
+
+### 7. Public Template Library?
+
+Current plan: Routes are either AI-generated for you or shared directly by a friend. No public browsing.
+
+**Argument for a public library:**
+- Users could run the same route and compare scores/times ("Who completed the Nashville Foodie Challenge faster?")
+- Leaderboard per route = real apples-to-apples competition
+- Community feel, replay value, people try popular routes
+
+**Argument against:**
+- Reduces the "personalized" feel (the whole point is AI picks tasks for YOU)
+- More to build (browsing UI, sorting, moderation)
+- Could wait until we see how people actually use sharing first
+- Do we really need people rushing to complete something if time is our main quantifier? That makes it less enjoyable potetntially 
+
+**Note:** The `is_public` field already exists on `RouteTemplate` (default false), so the data model supports this whenever we decide to flip it on. Not needed for MVP.
