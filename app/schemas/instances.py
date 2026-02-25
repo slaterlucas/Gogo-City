@@ -10,11 +10,10 @@ from pydantic import BaseModel, Field
 
 class ImportTemplateRequest(BaseModel):
     template_id: UUID = Field(..., description="ID of the template to import")
-    user_id: UUID = Field(..., description="ID of the importing user")
 
 
 class ImportSharedRouteRequest(BaseModel):
-    user_id: UUID = Field(..., description="ID of the importing user")
+    pass
 
 
 class UpdateInstanceStatusRequest(BaseModel):

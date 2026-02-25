@@ -4,9 +4,9 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.core.auth import get_current_user
 from app.db.session import get_db
 from app.schemas.instances import (
-    ImportSharedRouteRequest,
     InstanceResponse,
     InstanceTaskResponse,
     ProgressResponse,
@@ -53,13 +53,13 @@ def preview_shared_route(share_code: str, db: Session = Depends(get_db)):
 @router.post("/import/{share_code}", response_model=InstanceResponse, status_code=201)
 def import_shared_route(
     share_code: str,
-    body: ImportSharedRouteRequest,
     db: Session = Depends(get_db),
+    user_id: UUID = Depends(get_current_user),
 ):
-    """Import a shared route into the user's account as an independent instance."""
+    """Import a shared route into the authenticated user's account."""
     svc = InstanceService(db)
     try:
-        instance = svc.import_shared_route(share_code, body.user_id)
+        instance = svc.import_shared_route(share_code, user_id)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
 

@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.core.auth import get_current_user
 from app.db.session import get_db
 from app.schemas.instances import (
     ImportTemplateRequest,
@@ -58,19 +59,26 @@ def _instance_response(instance) -> InstanceResponse:
 
 
 @router.post("/", response_model=InstanceResponse, status_code=201)
-def create_instance(body: ImportTemplateRequest, db: Session = Depends(get_db)):
+def create_instance(
+    body: ImportTemplateRequest,
+    db: Session = Depends(get_db),
+    user_id: UUID = Depends(get_current_user),
+):
     """Import a template into a personal route instance."""
     svc = InstanceService(db)
     try:
-        instance = svc.import_template(body.template_id, body.user_id)
+        instance = svc.import_template(body.template_id, user_id)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
     return _instance_response(instance)
 
 
 @router.get("/", response_model=list[InstanceListItem])
-def list_instances(user_id: UUID, db: Session = Depends(get_db)):
-    """List all route instances for a user."""
+def list_instances(
+    db: Session = Depends(get_db),
+    user_id: UUID = Depends(get_current_user),
+):
+    """List all route instances for the authenticated user."""
     svc = InstanceService(db)
     instances = svc.list_instances(user_id)
     return [
@@ -88,7 +96,11 @@ def list_instances(user_id: UUID, db: Session = Depends(get_db)):
 
 
 @router.get("/{instance_id}", response_model=InstanceResponse)
-def get_instance(instance_id: UUID, user_id: UUID, db: Session = Depends(get_db)):
+def get_instance(
+    instance_id: UUID,
+    db: Session = Depends(get_db),
+    user_id: UUID = Depends(get_current_user),
+):
     """Get a single route instance with tasks and progress."""
     svc = InstanceService(db)
     instance = svc.get_instance(instance_id, user_id)
@@ -98,7 +110,11 @@ def get_instance(instance_id: UUID, user_id: UUID, db: Session = Depends(get_db)
 
 
 @router.delete("/{instance_id}")
-def delete_instance(instance_id: UUID, user_id: UUID, db: Session = Depends(get_db)):
+def delete_instance(
+    instance_id: UUID,
+    db: Session = Depends(get_db),
+    user_id: UUID = Depends(get_current_user),
+):
     """Delete a route instance."""
     svc = InstanceService(db)
     if not svc.delete_instance(instance_id, user_id):
@@ -110,8 +126,8 @@ def delete_instance(instance_id: UUID, user_id: UUID, db: Session = Depends(get_
 def update_instance_status(
     instance_id: UUID,
     body: UpdateInstanceStatusRequest,
-    user_id: UUID,
     db: Session = Depends(get_db),
+    user_id: UUID = Depends(get_current_user),
 ):
     """Update an instance's status (active, completed, archived)."""
     svc = InstanceService(db)
@@ -131,8 +147,8 @@ def update_task(
     instance_id: UUID,
     task_id: UUID,
     body: UpdateTaskRequest,
-    user_id: UUID,
     db: Session = Depends(get_db),
+    user_id: UUID = Depends(get_current_user),
 ):
     """Update notes on an instance task."""
     svc = InstanceService(db)
@@ -146,8 +162,8 @@ def update_task(
 def delete_task(
     instance_id: UUID,
     task_id: UUID,
-    user_id: UUID,
     db: Session = Depends(get_db),
+    user_id: UUID = Depends(get_current_user),
 ):
     """Remove a task from an instance."""
     svc = InstanceService(db)

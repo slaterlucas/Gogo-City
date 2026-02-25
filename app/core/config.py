@@ -15,11 +15,16 @@ class Settings(BaseSettings):
     
     # Database
     database_url: str = "postgresql://postgres:postgres@localhost:5432/gogocity"
-    
+
     # OpenAI
     openai_api_key: str = ""
-    openai_model: str = "gpt-4o"  # Latest model with good structured output
-    
+    openai_model: str = "gpt-4o"
+
+    # JWT auth
+    jwt_secret_key: str = "change-me-in-production"
+    jwt_algorithm: str = "HS256"
+    jwt_expire_minutes: int = 60 * 24 * 7  # 7 days
+
     # App settings
     debug: bool = False
 

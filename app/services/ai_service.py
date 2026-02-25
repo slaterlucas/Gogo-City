@@ -70,7 +70,9 @@ class AIService:
             if task_id in valid_task_ids
         ]
         
-        return validated_ids
+        # Return both task IDs and the AI-generated title
+        ai_title = result.get("route_title", "").strip() or None
+        return validated_ids, ai_title
     
     def _build_system_prompt(self) -> str:
         """Build the system prompt for task selection."""
@@ -80,19 +82,24 @@ Your job is to select tasks from a curated list that best match the user's prefe
 
 Guidelines:
 - Select tasks that fit within the user's available time (consider avg_duration_minutes)
+- Account for ~15 minutes of travel time between each task when calculating total time
 - Match the user's vibe/mood preferences using the task's vibe_tags
 - Respect budget constraints using price_level (1=cheap, 4=expensive)
 - Respect dietary restrictions using dietary_tags
 - Create a balanced, enjoyable route with variety
 - Order tasks in a logical flow (but don't worry about physical distance)
 
+For route_title: write a specific, creative, evocative name for this exact route.
+Do NOT use generic names like "Nashville Adventure" or "[Vibe] Nashville".
+Examples of good titles: "Dive Bars & Downtown Legends", "Hot Chicken & Hidden Gems", "Sunrise to Skyline"
+
 You MUST respond with valid JSON in this exact format:
 {
     "selected_task_ids": ["uuid1", "uuid2", "uuid3", ...],
-    "route_title": "A catchy title for this route"
+    "route_title": "A specific, creative title for this route"
 }
 
-Select enough tasks to fill the available time. If the user has 4 hours, aim for 4-6 tasks.
+Select enough tasks to fill the available time after accounting for travel. If the user has 4 hours, aim for 4-5 tasks.
 Do NOT include any explanation, just the JSON response."""
     
     def _build_user_message(

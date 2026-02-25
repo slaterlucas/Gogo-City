@@ -20,6 +20,7 @@ class User(Base, UUIDMixin, TimestampMixin):
     username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
     display_name: Mapped[Optional[str]] = mapped_column(String(100))
     avatar_url: Mapped[Optional[str]] = mapped_column(String)
+    password_hash: Mapped[str] = mapped_column(String, nullable=False)
     
     # Relationships
     authored_templates: Mapped[list["RouteTemplate"]] = relationship(

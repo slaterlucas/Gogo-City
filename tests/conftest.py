@@ -7,8 +7,12 @@ from unittest.mock import MagicMock
 import pytest
 from fastapi.testclient import TestClient
 
+from app.core.auth import create_access_token, get_current_user
 from app.db.session import get_db
 from app.main import app
+
+# Fixed user for tests that just need a valid authenticated user.
+TEST_USER_ID = uuid.UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
 
 
 @pytest.fixture
@@ -19,10 +23,20 @@ def mock_db():
 
 @pytest.fixture
 def client(mock_db):
-    """FastAPI test client with the DB dependency overridden."""
+    """FastAPI test client with DB and auth dependencies overridden.
+
+    All protected endpoints receive TEST_USER_ID as the authenticated user.
+    """
     app.dependency_overrides[get_db] = lambda: mock_db
+    app.dependency_overrides[get_current_user] = lambda: TEST_USER_ID
     yield TestClient(app)
     app.dependency_overrides.clear()
+
+
+def auth_headers(user_id: uuid.UUID | None = None) -> dict:
+    """Return Authorization headers with a real JWT for the given user (or TEST_USER_ID)."""
+    token = create_access_token(user_id or TEST_USER_ID)
+    return {"Authorization": f"Bearer {token}"}
 
 
 # ── Fake model helpers ───────────────────────────────────────────────

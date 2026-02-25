@@ -56,7 +56,7 @@ class RouteService:
         }
         
         # 5. Call AI to select tasks
-        selected_task_ids = self.ai_service.select_tasks_for_route(
+        selected_task_ids, ai_title = self.ai_service.select_tasks_for_route(
             preferences=preferences,
             available_tasks=tasks_for_ai,
         )
@@ -68,8 +68,8 @@ class RouteService:
         task_map = {task.id: task for task in available_tasks}
         selected_tasks = [task_map[tid] for tid in selected_task_ids if tid in task_map]
         
-        # 7. Generate title
-        title = request.custom_title or self.ai_service.generate_route_title(
+        # 7. Use AI title, then custom title, then fallback double check we're not always hitting fallback
+        title = request.custom_title or ai_title or self.ai_service.generate_route_title(
             city.name, request.vibe_tags
         )
         
@@ -128,11 +128,12 @@ class RouteService:
         vibe_tags: list[str],
     ) -> RouteTemplate:
         """Create a route template with its tasks."""
-        # Calculate estimated duration
-        total_duration = sum(
-            task.avg_duration_minutes or 30  # Default 30 min if not set
-            for task in selected_tasks
-        )
+        # Calculate estimated duration with 15min travel buffer between tasks
+        task_time = sum(task.avg_duration_minutes or 30 for task in selected_tasks)
+        travel_time = 15 * (len(selected_tasks) - 1)
+        raw_duration = task_time + travel_time
+        # Round to nearest 5 minutes
+        total_duration = round(raw_duration / 5) * 5
         
         # Create template
         template = RouteTemplate(

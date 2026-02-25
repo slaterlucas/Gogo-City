@@ -168,3 +168,14 @@ Current plan: Routes are either AI-generated for you or shared directly by a fri
 - Do we really need people rushing to complete something if time is our main quantifier? That makes it less enjoyable potetntially 
 
 **Note:** The `is_public` field already exists on `RouteTemplate` (default false), so the data model supports this whenever we decide to flip it on. Not needed for MVP.
+
+### 8. Photo Verification Accuracy vs Cost
+
+Currently using `detail: "low"` in OpenAI Vision calls for photo verification. This uses ~85 tokens per image (cheap) but may miss fine details.
+
+Options:
+- `"low"` (current): Fast, cheap, good for obvious matches (storefront signs, food plates)
+- `"auto"`: Let OpenAI decide based on image size. Moderate cost.
+- `"high"`: Best accuracy, analyzes image tiles. More expensive per check-in.
+
+If users complain about false rejections, bump to `"auto"` first. Monitor token usage before going to `"high"`.

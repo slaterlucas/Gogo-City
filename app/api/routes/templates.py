@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from app.core.auth import get_current_user
 from app.db.session import get_db
 from app.models import RouteTemplate, TemplateTask
 from app.schemas.instances import TogglePublicRequest
@@ -86,8 +87,8 @@ def list_public_templates(
 def toggle_template_public(
     template_id: UUID,
     body: TogglePublicRequest,
-    user_id: UUID,
     db: Session = Depends(get_db),
+    user_id: UUID = Depends(get_current_user),
 ):
     """Toggle is_public on a template (author only)."""
     svc = InstanceService(db)
@@ -98,11 +99,19 @@ def toggle_template_public(
 
 
 @router.delete("/{template_id}")
-def delete_template(template_id: UUID, db: Session = Depends(get_db)):
-    """Delete a route template."""
-    template = db.query(RouteTemplate).filter(RouteTemplate.id == template_id).first()
+def delete_template(
+    template_id: UUID,
+    db: Session = Depends(get_db),
+    user_id: UUID = Depends(get_current_user),
+):
+    """Delete a route template (author only)."""
+    template = (
+        db.query(RouteTemplate)
+        .filter(RouteTemplate.id == template_id, RouteTemplate.author_id == user_id)
+        .first()
+    )
     if template:
         db.delete(template)
         db.commit()
         return {"status": "deleted"}
-    return {"status": "not found"}
+    raise HTTPException(status_code=404, detail="Template not found or not authorized")

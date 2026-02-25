@@ -5,6 +5,8 @@ This blocks Lucas's import script.
 
 **File to edit:** `nashville_template_tasks.csv` (in project root)
 
+**Column note:** This CSV is **curated task** data (the pool we use to build templates), not template data. You do **not** need a `template_id` column—you can remove it if it’s there. Templates are created later when we pick tasks from this pool for a route.
+
 ---
 
 ## Step 1 - Upload to Google Sheets
@@ -23,6 +25,7 @@ The `verification_type` column needs its values renamed:
 |---------------|-----------|
 | `location_based_tracking` | `gps` |
 | `ai_photo_verification` | `photo` |
+| (for tasks needing both) | `both` |
 
 ---
 
