@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'PressStart';
+  src: local('Press Start 2P');
+}
+
+:root {
+  --color-primary: #e53935;
+  --color-primary-light: #ff6659;
+  --color-primary-dark: #ab000d;
+  --color-accent: #e53935;
+  --color-bg: #fafafa;
+  --color-surface: #f0f0f0;
+  --color-surface-light: #e0e0e0;
+  --color-border: #d0d0d0;
+  --color-text: #1a1a1a;
+  --color-text-muted: #777777;
+  --color-success: #2e7d32;
+  --color-error: #c62828;
+  --color-xp: #e53935;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Courier New', Courier, monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  border-left: 2px solid var(--color-border);
+  border-right: 2px solid var(--color-border);
+}
+
+/* Retro pixel-style font for game elements */
+.font-game {
+  font-family: 'Courier New', 'Courier', monospace;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+/* Chunky retro button */
+.btn-retro {
+  border: 3px solid var(--color-text);
+  box-shadow: 4px 4px 0px var(--color-text);
+  transition: all 0.1s;
+}
+
+.btn-retro:active {
+  box-shadow: 1px 1px 0px var(--color-text);
+  transform: translate(3px, 3px);
+}
+
+/* Retro card style */
+.card-retro {
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: 4px;
+}
+
+/* Progress bar stepped look */
+.progress-retro {
+  background: var(--color-surface-light);
+  border: 2px solid var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-retro-fill {
+  background: var(--color-primary);
+  border-radius: 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 8px,
+    rgba(255,255,255,0.2) 8px,
+    rgba(255,255,255,0.2) 10px
+  );
+}
+
+/* Input styling */
+input, select {
+  background: white !important;
+  border: 2px solid var(--color-border) !important;
+  border-radius: 4px !important;
+  color: var(--color-text) !important;
+}
+
+input:focus, select:focus {
+  border-color: var(--color-primary) !important;
+  outline: none !important;
+}

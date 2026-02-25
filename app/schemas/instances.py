@@ -39,6 +39,7 @@ class InstanceTaskResponse(BaseModel):
     task_description: str | None = None
     verification_type: str
     verification_hint: str | None = None
+    xp: int = 0
     notes: str | None = None
     is_completed: bool = False
 

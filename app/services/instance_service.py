@@ -221,6 +221,7 @@ class InstanceService:
             task_description=tt.task_description,
             verification_hint=tt.verification_hint,
             verification_type=tt.verification_type,
+            xp=tt.xp,
             notes=tt.notes,
         )
         self.db.add(it)

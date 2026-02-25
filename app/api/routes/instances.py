@@ -40,6 +40,7 @@ def _task_response(task) -> InstanceTaskResponse:
         task_description=task.task_description,
         verification_type=task.verification_type,
         verification_hint=task.verification_hint,
+        xp=task.xp,
         notes=task.notes,
         is_completed=task.check_in is not None,
     )

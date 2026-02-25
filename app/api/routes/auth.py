@@ -28,7 +28,9 @@ def register(body: RegisterRequest, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(user)
 
-    return TokenResponse(access_token=create_access_token(user.id))
+    return TokenResponse(
+        access_token=create_access_token(user.id, user.username, user.display_name or "")
+    )
 
 
 @router.post("/login", response_model=TokenResponse)
@@ -41,4 +43,6 @@ def login(body: LoginRequest, db: Session = Depends(get_db)):
             detail="Invalid email or password",
         )
 
-    return TokenResponse(access_token=create_access_token(user.id))
+    return TokenResponse(
+        access_token=create_access_token(user.id, user.username, user.display_name or "")
+    )
