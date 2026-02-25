@@ -11,44 +11,34 @@
 - [x] Build auth endpoints (register, login, JWT tokens) — `app/api/routes/auth.py`
 - [x] Add auth middleware to protect all existing endpoints — `app/core/auth.py`, `Depends(get_current_user)`
 - [x] Replace placeholder user in `app/api/routes/generate.py` with real auth
-
----
-
-## Next Tasks
-
-### Wire auth into check-ins (quick)
-- [ ] Replace `request.user_id` body field in `app/api/routes/checkins.py` with `Depends(get_current_user)` — same pattern as the other routes
-- [ ] Remove `user_id` from `CheckInRequest` schema in `app/schemas/checkins.py`
+- [x] Wire auth into check-ins — `app/api/routes/checkins.py`, `app/schemas/checkins.py`
 
 ### XP System
-The team decided on fixed XP per task (see README Team Discussions #2).
-
-- [ ] Add `xp` column (int, default 10) to `curated_tasks`, `template_tasks`, `instance_tasks` — write Alembic migration
-- [ ] Add `total_xp` (int, default 0) and `level` (int, default 1) columns to `users` — add to same migration
-- [ ] Update `scripts/import_nashville_csv.py` to read `xp` from CSV (add xp column to CSV first)
-- [ ] Award XP on successful check-in: in `checkins.py`, after creating CheckIn, increment `user.total_xp += task.xp`
-- [ ] Auto-level logic: define thresholds (e.g. level = 1 + total_xp // 100) and update `user.level` on each XP award
-- [ ] Return `total_xp` and `level` in the CheckInResponse so the frontend can show the update
+- [x] XP formula and assignment script — `scripts/assign_xp.py`
+- [x] `xp` column on tasks, `total_xp` + `level` on users
+- [x] Award XP on successful check-in — `checkins.py` increments `user.total_xp`
+- [x] `xp_to_level()` helper in `app/models/user.py`
+- [x] `xp_earned`, `total_xp`, `level` returned in `CheckInResponse`
 
 ### Leaderboard
-- [ ] Build `GET /api/leaderboard` — return top N users sorted by `total_xp` (name, total_xp, level)
-- [ ] Register leaderboard router in `app/api/__init__.py`
+- [x] `GET /api/check-ins/leaderboard` — global XP leaderboard with rank, username, total_xp, level
 
 ### Tests
-- [ ] Write tests for `POST /api/check-ins` (success, duplicate, wrong user, GPS fail, no photo)
-- [ ] Write tests for `GET /api/leaderboard`
+- [x] Auth tests — `tests/test_auth_api.py` (register, login, token validation)
+- [x] Check-in tests — `tests/test_checkins_api.py` (16 tests: GPS/photo success, duplicate, wrong user, verification failures, progress, ownership)
 
 ### Cleanup
-- [ ] Update README — remove stale TODOs ("Add real authentication", "Wipe curated_tasks") since both are done
+- [x] Updated README — removed stale TODOs, updated auth discussion section
 
 ---
 
 ## Key Files
 - `app/api/routes/auth.py`
 - `app/core/auth.py`
-- `app/api/routes/checkins.py` ← needs auth wired in
-- `app/schemas/checkins.py` ← needs user_id removed
-- `app/models/user.py` ← needs total_xp, level
-- `app/models/curated_task.py` ← needs xp
-- `app/models/route.py` ← TemplateTask + InstanceTask need xp
+- `app/api/routes/checkins.py`
+- `app/schemas/checkins.py`
+- `app/models/user.py`
 - `scripts/import_nashville_csv.py`
+- `scripts/assign_xp.py`
+- `tests/test_auth_api.py`
+- `tests/test_checkins_api.py`
