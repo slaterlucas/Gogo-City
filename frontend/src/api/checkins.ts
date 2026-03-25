@@ -39,6 +39,8 @@ export interface ProgressDetail {
     xp: number;
     completed: boolean;
     verified_by?: string;
+    photo_url?: string;
+    checked_in_at?: string;
   }[];
 }
 

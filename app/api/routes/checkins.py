@@ -197,6 +197,8 @@ def get_instance_progress(
             "xp": t.xp,
             "completed": t.check_in is not None,
             "verified_by": t.check_in.verified_by if t.check_in else None,
+            "photo_url": t.check_in.photo_url if t.check_in else None,
+            "checked_in_at": t.check_in.checked_in_at.isoformat() if t.check_in else None,
         }
         for t in instance.tasks
     ]

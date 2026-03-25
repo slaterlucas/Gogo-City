@@ -33,7 +33,7 @@ export default function RegisterPage() {
     <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-white">
       <div className="flex items-center gap-3 mb-2">
         <MapPin size={28} className="text-[var(--color-primary)]" />
-        <h1 className="text-2xl tracking-tight">GoGoCity</h1>
+        <h1 className="text-3xl tracking-tight" style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800 }}>GoGo City</h1>
       </div>
       <p className="text-[10px] text-[var(--color-text-muted)] mb-8 uppercase tracking-widest">Join the quest</p>
 

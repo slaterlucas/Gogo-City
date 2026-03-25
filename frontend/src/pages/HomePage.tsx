@@ -153,7 +153,10 @@ export default function HomePage() {
 
   return (
     <div className="px-5 pt-8 pb-24 page-enter">
-      <h1 className="text-xl mb-1 tracking-tight">GoGoCity</h1>
+      <h1 className="text-2xl mb-1 tracking-tight" style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800 }}>
+          <span className="bg-gradient-to-r from-[#e8832a] to-[#e55a2f] bg-clip-text text-transparent">GoGo</span>
+          <span className="text-[#2d2d2d]">City</span>
+        </h1>
       <p className="text-[9px] text-[var(--color-text-muted)] mb-5 uppercase tracking-[0.2em]">Explore. Complete. Level up.</p>
 
       <XPBar xp={userXP} level={userLevel} />

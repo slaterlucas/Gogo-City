@@ -4,7 +4,7 @@ import { getInstance, Instance } from '../api/instances';
 import { getProgress, ProgressDetail } from '../api/checkins';
 import CheckInModal from '../components/CheckInModal';
 import RouteMap from '../components/RouteMap';
-import { ArrowLeft, MapPin, Camera, Shield, Zap, Check, Share2, List, Map } from 'lucide-react';
+import { ArrowLeft, MapPin, Camera, Shield, Zap, Check, Share2, List, Map, ChevronDown } from 'lucide-react';
 
 const VERIFY_ICON = {
   gps: MapPin,
@@ -20,6 +20,7 @@ export default function RoutePage() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [view, setView] = useState<'list' | 'map'>('list');
+  const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const load = async () => {
@@ -119,12 +120,17 @@ export default function RoutePage() {
           const completed = task.is_completed;
           const Icon = VERIFY_ICON[task.verification_type as keyof typeof VERIFY_ICON] || MapPin;
 
+          const isExpanded = expandedTaskId === task.id;
+
           return (
             <div
               key={task.id}
-              className={`card-retro p-4 border-l-4 ${completed ? 'border-[var(--color-success)] opacity-60' : 'border-[var(--color-primary)]'}`}
+              className={`card-retro p-4 border-l-4 ${completed ? 'border-[var(--color-success)]' : 'border-[var(--color-primary)]'}`}
             >
-              <div className="flex items-start gap-3">
+              <div
+                className={`flex items-start gap-3 ${completed ? 'cursor-pointer' : ''}`}
+                onClick={completed ? () => setExpandedTaskId(isExpanded ? null : task.id) : undefined}
+              >
                 <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
                   completed
                     ? 'bg-[var(--color-success)] text-white shadow-sm'
@@ -150,15 +156,38 @@ export default function RoutePage() {
                     )}
                   </div>
                 </div>
-                {!completed && (
+                {!completed ? (
                   <button
                     onClick={() => setCheckInTaskId(task.id)}
                     className="px-3 py-1.5 bg-[var(--color-primary)] text-white text-[9px] uppercase tracking-widest btn-retro shrink-0"
                   >
                     Check In
                   </button>
+                ) : (
+                  <ChevronDown size={16} className={`text-[var(--color-text-muted)] shrink-0 mt-1 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                 )}
               </div>
+
+              {completed && isExpanded && (
+                <div className="mt-3 pt-3 border-t border-[var(--color-border)]">
+                  {progTask?.photo_url ? (
+                    <img
+                      src={progTask.photo_url}
+                      alt={`Evidence for ${task.name}`}
+                      className="w-full rounded border-2 border-[var(--color-border)]"
+                    />
+                  ) : (
+                    <p className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-widest text-center py-3">
+                      {progTask?.verified_by === 'gps' ? 'Verified by GPS — no photo' : 'No photo available'}
+                    </p>
+                  )}
+                  {progTask?.checked_in_at && (
+                    <p className="text-[8px] text-[var(--color-text-muted)] uppercase tracking-widest mt-2">
+                      Completed {new Date(progTask.checked_in_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}
