@@ -34,6 +34,9 @@ class Settings(BaseSettings):
     # Admin
     admin_emails: str = ""
 
+    # CORS — comma-separated origins, or "*" for dev
+    cors_origins: str = "*"
+
     # App settings
     debug: bool = False
 
