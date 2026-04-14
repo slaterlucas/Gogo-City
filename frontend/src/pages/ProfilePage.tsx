@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { listInstances, InstanceListItem } from '../api/instances';
 import { getLeaderboard } from '../api/checkins';
+import { getAchievements, Achievement } from '../api/achievements';
 import { updateMe } from '../api/auth';
 import XPBar from '../components/XPBar';
-import { LogOut, Route, CheckCircle, MapPin, Pencil, PlusCircle, Shield, Database } from 'lucide-react';
+import { LogOut, Route, CheckCircle, MapPin, Pencil, PlusCircle, Shield, Database, ChevronDown, Award } from 'lucide-react';
 
 export default function ProfilePage() {
   const auth = useAuth();
@@ -19,6 +20,10 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
   const [saving, setSaving] = useState(false);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [achievementsOpen, setAchievementsOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [unlockedCount, setUnlockedCount] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const startEditing = () => {
@@ -58,8 +63,16 @@ export default function ProfilePage() {
 
     async function load() {
       try {
-        const [inst, lb] = await Promise.all([listInstances(), getLeaderboard(100)]);
+        const [inst, lb, achData] = await Promise.all([
+          listInstances(),
+          getLeaderboard(100),
+          getAchievements().catch(() => null),
+        ]);
         setInstances(inst);
+        if (achData) {
+          setAchievements(achData.achievements);
+          setUnlockedCount(achData.unlocked);
+        }
         if (token) {
           const payload = JSON.parse(atob(token.split('.')[1]));
           const uid = payload.sub;
@@ -91,7 +104,7 @@ export default function ProfilePage() {
   if (loading) return <div className="px-4 pt-6 text-center text-xs text-[var(--color-text-muted)] uppercase tracking-widest">Loading...</div>;
 
   return (
-    <div className="px-5 pt-8 pb-24 page-enter">
+    <div className="px-5 pt-8 pb-28 page-enter">
       <div className="flex justify-between items-start mb-6">
         <div>
           {editing ? (
@@ -172,27 +185,82 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {achievements.length > 0 && (
+        <section className="mt-6">
+          <button
+            onClick={() => setAchievementsOpen(!achievementsOpen)}
+            className="flex items-center gap-1.5 mb-3 w-full text-left"
+          >
+            <Award size={14} className="text-[var(--color-primary)]" />
+            <h2 className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-widest">
+              Achievements ({unlockedCount}/{achievements.length})
+            </h2>
+            <ChevronDown
+              size={14}
+              className={`text-[var(--color-text-muted)] ml-auto transition-transform duration-200 ${achievementsOpen ? 'rotate-180' : ''}`}
+            />
+          </button>
+          {achievementsOpen && (
+            <div className="grid grid-cols-4 gap-2">
+              {achievements.map((ach) => (
+                <div
+                  key={ach.id}
+                  className={`card-retro p-2 text-center ${ach.unlocked ? '' : 'opacity-30 grayscale'}`}
+                  title={`${ach.name}: ${ach.description}`}
+                >
+                  <span className="text-xl block">{ach.icon}</span>
+                  <p className="text-[7px] text-[var(--color-text-muted)] uppercase tracking-wide mt-1 truncate">
+                    {ach.name}
+                  </p>
+                  {!ach.unlocked && (
+                    <div className="progress-retro h-1 mt-1">
+                      <div
+                        className="progress-retro-fill h-full"
+                        style={{ width: `${(ach.progress / ach.threshold) * 100}%` }}
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
       {instances.length > 0 && (
         <section className="mt-6">
-          <h2 className="text-[10px] text-[var(--color-text-muted)] mb-3 uppercase tracking-widest">Quest History</h2>
-          <div className="space-y-2">
-            {instances.map((inst) => (
-              <button
-                key={inst.id}
-                onClick={() => navigate(`/route/${inst.id}`)}
-                className="w-full card-retro p-3 text-left hover:bg-[var(--color-surface-light)] transition-colors"
-              >
-                <div className="flex justify-between items-center">
-                  <h3 className="font-bold text-sm">{inst.title}</h3>
-                  <span className={`text-[8px] uppercase tracking-widest ${
-                    inst.status === 'completed' ? 'text-[var(--color-success)]' : 'text-[var(--color-primary)]'
-                  }`}>
-                    {inst.status === 'completed' ? 'Done' : `${inst.progress.completed_tasks}/${inst.progress.total_tasks}`}
-                  </span>
-                </div>
-              </button>
-            ))}
-          </div>
+          <button
+            onClick={() => setHistoryOpen(!historyOpen)}
+            className="flex items-center gap-1.5 mb-3 w-full text-left"
+          >
+            <h2 className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-widest">
+              Quest History ({instances.length})
+            </h2>
+            <ChevronDown
+              size={14}
+              className={`text-[var(--color-text-muted)] ml-auto transition-transform duration-200 ${historyOpen ? 'rotate-180' : ''}`}
+            />
+          </button>
+          {historyOpen && (
+            <div className="space-y-2">
+              {instances.map((inst) => (
+                <button
+                  key={inst.id}
+                  onClick={() => navigate(`/route/${inst.id}`)}
+                  className="w-full card-retro p-3 text-left hover:bg-[var(--color-surface-light)] transition-colors"
+                >
+                  <div className="flex justify-between items-center">
+                    <h3 className="font-bold text-sm">{inst.title}</h3>
+                    <span className={`text-[8px] uppercase tracking-widest ${
+                      inst.status === 'completed' ? 'text-[var(--color-success)]' : 'text-[var(--color-primary)]'
+                    }`}>
+                      {inst.status === 'completed' ? 'Done' : `${inst.progress.completed_tasks}/${inst.progress.total_tasks}`}
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
         </section>
       )}
     </div>

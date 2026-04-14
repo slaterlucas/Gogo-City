@@ -1,7 +1,7 @@
 """API router configuration."""
 from fastapi import APIRouter
 
-from app.api.routes import auth, checkins, cities, generate, health, instances, sharing, submissions, templates
+from app.api.routes import achievements, auth, checkins, cities, generate, health, instances, sharing, submissions, templates
 
 api_router = APIRouter()
 
@@ -15,3 +15,4 @@ api_router.include_router(instances.router, prefix="/instances", tags=["instance
 api_router.include_router(sharing.router, prefix="/routes", tags=["sharing"])
 api_router.include_router(checkins.router, prefix="/check-ins", tags=["check-ins"])
 api_router.include_router(submissions.router, prefix="/submissions", tags=["submissions"])
+api_router.include_router(achievements.router, prefix="/achievements", tags=["achievements"])
