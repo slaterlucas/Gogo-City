@@ -8,25 +8,27 @@ const PODIUM: Record<number, { height: string; color: string; windowColor: strin
   3: { height: 'h-18', color: 'bg-[#555]',    windowColor: 'bg-orange-300' },
 };
 
-function Building({ rank, entry, isMe }: { rank: number; entry: LeaderboardEntry; isMe: boolean }) {
+function PodiumLabel({ entry, isMe }: { entry: LeaderboardEntry; isMe: boolean }) {
+  return (
+    <div className="flex flex-col items-center w-[100px]">
+      <p className={`text-[10px] font-bold text-center truncate w-full ${isMe ? 'text-[var(--color-primary)]' : ''}`}>
+        {entry.display_name}
+      </p>
+      <div className="flex items-center gap-0.5">
+        <Zap size={9} className="text-[var(--color-primary)]" />
+        <span className="text-[9px] font-bold text-[var(--color-primary)] tabular-nums">{entry.total_xp} XP</span>
+      </div>
+    </div>
+  );
+}
+
+function BuildingBlock({ rank }: { rank: number }) {
   const cfg = PODIUM[rank];
   const rows = rank === 1 ? 4 : rank === 2 ? 3 : 2;
 
   return (
-    <div className={`flex flex-col items-center w-[100px] ${rank === 1 ? 'order-2' : rank === 2 ? 'order-1' : 'order-3'}`}>
-      {/* label area -- fixed height so all three columns align */}
-      <div className="flex flex-col items-center justify-end h-10">
-        <p className={`text-[10px] font-bold text-center truncate w-full ${isMe ? 'text-[var(--color-primary)]' : ''}`}>
-          {entry.display_name}
-        </p>
-        <div className="flex items-center gap-0.5">
-          <Zap size={9} className="text-[var(--color-primary)]" />
-          <span className="text-[9px] font-bold text-[var(--color-primary)] tabular-nums">{entry.total_xp} XP</span>
-        </div>
-      </div>
-
-      {/* building -- mt-auto not needed since parent is items-end */}
-      <div className="relative w-[90px] mt-2">
+    <div className="flex flex-col items-center w-[100px]">
+      <div className="relative w-[90px]">
         {rank === 1 && (
           <div className="flex justify-center">
             <div className="w-[2px] h-3 bg-[#2d2d2d]" />
@@ -46,7 +48,6 @@ function Building({ rank, entry, isMe }: { rank: number; entry: LeaderboardEntry
           </div>
         </div>
       </div>
-      <span className="text-[7px] text-[var(--color-text-muted)] uppercase mt-1.5">Lv.{entry.level}</span>
     </div>
   );
 }
@@ -87,24 +88,37 @@ export default function LeaderboardPage() {
       ) : (
         <>
           {top3.length > 0 && (
-            <div className="mb-6">
-              {/* skyline */}
-              <div className="flex items-end justify-center gap-2 pt-4">
+            <div className="mb-6 pt-4">
+              {/* names + XP -- single row, always aligned */}
+              <div className="flex justify-center gap-2 mb-3">
                 {[2, 1, 3].map((rank) => {
                   const entry = top3.find((e) => e.rank === rank);
                   if (!entry) return <div key={rank} className="w-[100px]" />;
-                  return (
-                    <Building
-                      key={entry.user_id}
-                      rank={rank}
-                      entry={entry}
-                      isMe={entry.user_id === userId}
-                    />
-                  );
+                  return <PodiumLabel key={entry.user_id} entry={entry} isMe={entry.user_id === userId} />;
+                })}
+              </div>
+              {/* buildings -- bottom-aligned */}
+              <div className="flex items-end justify-center gap-2">
+                {[2, 1, 3].map((rank) => {
+                  const entry = top3.find((e) => e.rank === rank);
+                  if (!entry) return <div key={rank} className="w-[100px]" />;
+                  return <BuildingBlock key={entry.user_id} rank={rank} />;
                 })}
               </div>
               {/* ground line */}
               <div className="h-[3px] bg-[var(--color-text)] mx-2 mt-0" />
+              {/* level labels */}
+              <div className="flex justify-center gap-2 mt-1.5">
+                {[2, 1, 3].map((rank) => {
+                  const entry = top3.find((e) => e.rank === rank);
+                  if (!entry) return <div key={rank} className="w-[100px]" />;
+                  return (
+                    <div key={entry.user_id} className="w-[100px] text-center">
+                      <span className="text-[7px] text-[var(--color-text-muted)] uppercase">Lv.{entry.level}</span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 
