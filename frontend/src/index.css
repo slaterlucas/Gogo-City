@@ -160,6 +160,17 @@ input:focus, select:focus {
   outline: none !important;
 }
 
+/* Floating glass navbar */
+.navbar-glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    0 -1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 4px 24px rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
 /* Tap feedback on interactive elements */
 button, a {
   -webkit-tap-highlight-color: transparent;
