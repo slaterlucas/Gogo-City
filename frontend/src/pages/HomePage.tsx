@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { listInstances, deleteInstance, updateInstanceStatus, InstanceListItem } from '../api/instances';
 import { getLeaderboard } from '../api/checkins';
 import XPBar from '../components/XPBar';
-import { Compass, ChevronRight, ChevronDown, Zap, Archive, Trash2, X } from 'lucide-react';
+import { Compass, ChevronRight, Zap, Archive, Trash2, X } from 'lucide-react';
 
 const LONG_PRESS_MS = 500;
 
@@ -14,7 +14,6 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [actionTarget, setActionTarget] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
-  const [historyOpen, setHistoryOpen] = useState(false);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
 
@@ -160,7 +159,7 @@ export default function HomePage() {
         </h1>
       <p className="text-[9px] text-[var(--color-text-muted)] mb-5 uppercase tracking-[0.2em]">Explore. Complete. Level up.</p>
 
-      <XPBar xp={userXP} level={userLevel} expandable />
+      <XPBar xp={userXP} level={userLevel} />
 
       <button
         onClick={() => navigate('/generate')}
@@ -185,24 +184,13 @@ export default function HomePage() {
 
           {completed.length > 0 && (
             <section className="mt-7">
-              <button
-                onClick={() => setHistoryOpen(!historyOpen)}
-                className="flex items-center gap-1 mb-3 w-full text-left"
-              >
-                <Zap size={14} className="text-[var(--color-success)]" />
-                <h2 className="text-xs uppercase tracking-[0.15em] text-[var(--color-success)]">
-                  Completed ({completed.length})
-                </h2>
-                <ChevronDown
-                  size={14}
-                  className={`text-[var(--color-success)] ml-auto transition-transform duration-200 ${historyOpen ? 'rotate-180' : ''}`}
-                />
-              </button>
-              {historyOpen && (
-                <div className="space-y-2">
-                  {completed.map((inst) => renderCard(inst, 'completed'))}
-                </div>
-              )}
+              <h2 className="text-xs mb-3 uppercase tracking-[0.15em] text-[var(--color-success)] flex items-center gap-1">
+                <Zap size={14} />
+                Completed
+              </h2>
+              <div className="space-y-2">
+                {completed.map((inst) => renderCard(inst, 'completed'))}
+              </div>
             </section>
           )}
 

@@ -139,7 +139,7 @@ export default function ProfilePage() {
 
       <XPBar xp={xp} level={level} />
 
-      <div className="flex gap-2 mt-5 mb-4 pr-1 pb-1">
+      <div className="flex gap-2 mt-5 mb-4">
         <button
           onClick={() => navigate('/submit-task')}
           className="flex-1 py-3 bg-white text-xs uppercase tracking-widest btn-retro flex items-center justify-center gap-2"

@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { getLeaderboard, LeaderboardEntry } from '../api/checkins';
 import { Trophy, Zap } from 'lucide-react';
 
-const PODIUM: Record<number, { height: string; color: string; windowColor: string; icon: string }> = {
-  1: { height: 'h-32', color: 'bg-[#2d2d2d]', windowColor: 'bg-amber-300', icon: '👑' },
-  2: { height: 'h-24', color: 'bg-[#444]',    windowColor: 'bg-slate-300', icon: '🥈' },
-  3: { height: 'h-18', color: 'bg-[#555]',    windowColor: 'bg-orange-300', icon: '🥉' },
+const PODIUM: Record<number, { height: string; color: string; windowColor: string }> = {
+  1: { height: 'h-32', color: 'bg-[#2d2d2d]', windowColor: 'bg-amber-300' },
+  2: { height: 'h-24', color: 'bg-[#444]',    windowColor: 'bg-slate-300' },
+  3: { height: 'h-18', color: 'bg-[#555]',    windowColor: 'bg-orange-300' },
 };
 
 function Building({ rank, entry, isMe }: { rank: number; entry: LeaderboardEntry; isMe: boolean }) {
@@ -13,14 +13,13 @@ function Building({ rank, entry, isMe }: { rank: number; entry: LeaderboardEntry
   const rows = rank === 1 ? 4 : rank === 2 ? 3 : 2;
 
   return (
-    <div className={`flex flex-col items-center ${rank === 1 ? 'order-2' : rank === 2 ? 'order-1' : 'order-3'}`}>
-      <span className="text-lg mb-1">{cfg.icon}</span>
-      <p className={`text-[10px] font-bold text-center truncate max-w-[90px] mb-1.5 ${isMe ? 'text-[var(--color-primary)]' : ''}`}>
+    <div className={`flex flex-col items-center w-[100px] ${rank === 1 ? 'order-2' : rank === 2 ? 'order-1' : 'order-3'}`}>
+      <p className={`text-[10px] font-bold text-center truncate w-full mb-1 ${isMe ? 'text-[var(--color-primary)]' : ''}`}>
         {entry.display_name}
       </p>
       <div className="flex items-center gap-0.5 mb-2">
         <Zap size={9} className="text-[var(--color-primary)]" />
-        <span className="text-[9px] font-bold text-[var(--color-primary)] tabular-nums">{entry.total_xp}</span>
+        <span className="text-[9px] font-bold text-[var(--color-primary)] tabular-nums">{entry.total_xp} XP</span>
       </div>
 
       {/* building */}
@@ -94,7 +93,7 @@ export default function LeaderboardPage() {
               <div className="flex items-end justify-center gap-2 pt-4">
                 {[2, 1, 3].map((rank) => {
                   const entry = top3.find((e) => e.rank === rank);
-                  if (!entry) return <div key={rank} className="w-[90px]" />;
+                  if (!entry) return <div key={rank} className="w-[100px]" />;
                   return (
                     <Building
                       key={entry.user_id}
