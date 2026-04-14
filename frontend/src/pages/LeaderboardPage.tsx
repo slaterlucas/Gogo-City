@@ -1,12 +1,57 @@
 import { useEffect, useState } from 'react';
 import { getLeaderboard, LeaderboardEntry } from '../api/checkins';
-import { Trophy, Zap, Crown, Medal } from 'lucide-react';
+import { Trophy, Zap } from 'lucide-react';
 
-const MEDAL_COLORS: Record<number, { bg: string; text: string; border: string; icon: string }> = {
-  1: { bg: 'from-amber-50 to-yellow-50', text: 'text-amber-600', border: 'border-amber-200', icon: '👑' },
-  2: { bg: 'from-slate-50 to-gray-100', text: 'text-slate-500', border: 'border-slate-200', icon: '🥈' },
-  3: { bg: 'from-orange-50 to-amber-50', text: 'text-amber-700', border: 'border-amber-200', icon: '🥉' },
+const PODIUM: Record<number, { height: string; color: string; windowColor: string; icon: string }> = {
+  1: { height: 'h-32', color: 'bg-[#2d2d2d]', windowColor: 'bg-amber-300', icon: '👑' },
+  2: { height: 'h-24', color: 'bg-[#444]',    windowColor: 'bg-slate-300', icon: '🥈' },
+  3: { height: 'h-18', color: 'bg-[#555]',    windowColor: 'bg-orange-300', icon: '🥉' },
 };
+
+function Building({ rank, entry, isMe }: { rank: number; entry: LeaderboardEntry; isMe: boolean }) {
+  const cfg = PODIUM[rank];
+  const rows = rank === 1 ? 4 : rank === 2 ? 3 : 2;
+
+  return (
+    <div className={`flex flex-col items-center ${rank === 1 ? 'order-2' : rank === 2 ? 'order-1' : 'order-3'}`}>
+      <span className="text-lg mb-1">{cfg.icon}</span>
+      <p className={`text-[10px] font-bold text-center truncate max-w-[90px] mb-1.5 ${isMe ? 'text-[var(--color-primary)]' : ''}`}>
+        {entry.display_name}
+      </p>
+      <div className="flex items-center gap-0.5 mb-2">
+        <Zap size={9} className="text-[var(--color-primary)]" />
+        <span className="text-[9px] font-bold text-[var(--color-primary)] tabular-nums">{entry.total_xp}</span>
+      </div>
+
+      {/* building */}
+      <div className="relative w-[90px]">
+        {/* antenna on 1st place */}
+        {rank === 1 && (
+          <div className="flex justify-center mb-0">
+            <div className="w-[2px] h-3 bg-[#2d2d2d]" />
+          </div>
+        )}
+        <div className={`${cfg.height} ${cfg.color} w-full border-2 border-[var(--color-text)] relative`}
+          style={{ boxShadow: '3px 3px 0px var(--color-text)' }}>
+          {/* windows grid */}
+          <div className="absolute inset-1.5 grid grid-cols-3 gap-1 content-start">
+            {Array.from({ length: rows * 3 }).map((_, i) => (
+              <div key={i} className={`${cfg.windowColor} opacity-70 h-2`} />
+            ))}
+          </div>
+          {/* door */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-5 bg-[var(--color-surface-light)] border-t-2 border-x-2 border-[var(--color-text)]" />
+          {/* rank number */}
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 bg-white border-2 border-[var(--color-text)] flex items-center justify-center"
+            style={{ boxShadow: '2px 2px 0px var(--color-text)' }}>
+            <span className="text-[10px] font-bold">{rank}</span>
+          </div>
+        </div>
+      </div>
+      <span className="text-[7px] text-[var(--color-text-muted)] uppercase mt-1.5">Lv.{entry.level}</span>
+    </div>
+  );
+}
 
 export default function LeaderboardPage() {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
@@ -44,37 +89,24 @@ export default function LeaderboardPage() {
       ) : (
         <>
           {top3.length > 0 && (
-            <div className="flex items-end justify-center gap-3 mb-6 pt-4">
-              {[2, 1, 3].map((rank) => {
-                const entry = top3.find((e) => e.rank === rank);
-                if (!entry) return <div key={rank} className="w-24" />;
-                const medal = MEDAL_COLORS[rank];
-                const isMe = entry.user_id === userId;
-                const isFirst = rank === 1;
-                return (
-                  <div
-                    key={entry.user_id}
-                    className={`flex flex-col items-center ${isFirst ? 'order-2' : rank === 2 ? 'order-1' : 'order-3'}`}
-                  >
-                    <span className="text-2xl mb-1">{medal.icon}</span>
-                    <div
-                      className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${medal.bg} border-2 ${medal.border} flex items-center justify-center mb-2 ${
-                        isFirst ? 'scale-110 shadow-lg shadow-amber-500/15' : ''
-                      } ${isMe ? 'ring-2 ring-[var(--color-primary)] ring-offset-2' : ''}`}
-                    >
-                      <span className="text-lg font-bold font-sans">{entry.display_name?.charAt(0)?.toUpperCase() || '?'}</span>
-                    </div>
-                    <p className={`text-xs font-sans font-semibold text-center truncate max-w-[80px] ${isMe ? 'text-[var(--color-primary)]' : ''}`}>
-                      {entry.display_name}
-                    </p>
-                    <div className="flex items-center gap-0.5 mt-0.5">
-                      <Zap size={10} className="text-[var(--color-primary)]" />
-                      <span className="text-[10px] font-sans font-semibold text-[var(--color-primary)] tabular-nums">{entry.total_xp}</span>
-                    </div>
-                    <span className="text-[8px] font-sans text-[var(--color-text-muted)] mt-0.5">Lv.{entry.level}</span>
-                  </div>
-                );
-              })}
+            <div className="mb-6">
+              {/* skyline */}
+              <div className="flex items-end justify-center gap-2 pt-4">
+                {[2, 1, 3].map((rank) => {
+                  const entry = top3.find((e) => e.rank === rank);
+                  if (!entry) return <div key={rank} className="w-[90px]" />;
+                  return (
+                    <Building
+                      key={entry.user_id}
+                      rank={rank}
+                      entry={entry}
+                      isMe={entry.user_id === userId}
+                    />
+                  );
+                })}
+              </div>
+              {/* ground line */}
+              <div className="h-[3px] bg-[var(--color-text)] mx-2 mt-0" />
             </div>
           )}
 
@@ -92,8 +124,8 @@ export default function LeaderboardPage() {
                     <span className="text-[11px] w-8 text-center text-[var(--color-text-muted)] tabular-nums">
                       {entry.rank}
                     </span>
-                    <div className="w-9 h-9 rounded-xl bg-[var(--color-surface-light)] border border-[var(--color-border)] flex items-center justify-center shrink-0">
-                      <span className="text-sm font-bold font-sans text-[var(--color-text-muted)]">
+                    <div className="w-9 h-9 bg-[var(--color-surface-light)] border-2 border-[var(--color-border)] flex items-center justify-center shrink-0">
+                      <span className="text-sm font-bold text-[var(--color-text-muted)]">
                         {entry.display_name?.charAt(0)?.toUpperCase() || '?'}
                       </span>
                     </div>
