@@ -142,7 +142,7 @@ export default function ProfilePage() {
       <div className="flex gap-2 mt-5 mb-4">
         <button
           onClick={() => navigate('/submit-task')}
-          className="flex-1 py-3 bg-white text-xs uppercase tracking-widest btn-retro flex items-center justify-center gap-2"
+          className="flex-1 py-3 bg-white text-xs uppercase tracking-widest border border-[var(--color-border)] card-retro flex items-center justify-center gap-2 hover:bg-[var(--color-surface-light)] transition-colors"
         >
           <PlusCircle size={16} />
           Suggest Task
@@ -151,14 +151,14 @@ export default function ProfilePage() {
           <>
             <button
               onClick={() => navigate('/admin/submissions')}
-              className="flex-1 py-3 bg-[var(--color-primary)] text-white text-xs uppercase tracking-widest btn-retro flex items-center justify-center gap-2"
+              className="flex-1 py-3 bg-[var(--color-primary)] text-white text-xs uppercase tracking-widest card-retro border-none flex items-center justify-center gap-2"
             >
               <Shield size={16} />
               Review
             </button>
             <button
               onClick={() => navigate('/admin/tasks')}
-              className="flex-1 py-3 bg-[var(--color-primary)] text-white text-xs uppercase tracking-widest btn-retro flex items-center justify-center gap-2"
+              className="flex-1 py-3 bg-[var(--color-primary)] text-white text-xs uppercase tracking-widest card-retro border-none flex items-center justify-center gap-2"
             >
               <Database size={16} />
               Tasks DB
