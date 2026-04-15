@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { createCheckIn, CheckInResponse } from '../api/checkins';
 import { InstanceTask } from '../api/instances';
 import { X, MapPin, Camera, Loader2, CheckCircle, XCircle, Zap } from 'lucide-react';
@@ -78,10 +79,10 @@ export default function CheckInModal({ task, onClose, onSuccess }: Props) {
     }
   };
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[60] flex items-end justify-center">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative bg-white w-full max-w-[430px] border-t-2 border-[var(--color-text)] p-5 pb-8 max-h-[80vh] overflow-y-auto" style={{ marginBottom: 0 }}>
+      <div className="relative bg-white w-full max-w-[430px] border-t-2 border-[var(--color-text)] p-5 pb-8 max-h-[80vh] overflow-y-auto">
         <button onClick={onClose} className="absolute top-4 right-4 text-[var(--color-text-muted)]">
           <X size={20} />
         </button>
@@ -178,6 +179,7 @@ export default function CheckInModal({ task, onClose, onSuccess }: Props) {
           </>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
