@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { register, googleLogin } from '../api/auth';
-import { MapPin } from 'lucide-react';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -63,10 +62,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-white">
-      <div className="flex items-center gap-3 mb-2">
-        <MapPin size={28} className="text-[var(--color-primary)]" />
-        <h1 className="text-3xl tracking-tight" style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800 }}>GoGo City</h1>
-      </div>
+      <img src="/logo.png" alt="GoGo City" className="w-40 mb-1" />
       <p className="text-[10px] text-[var(--color-text-muted)] mb-8 uppercase tracking-widest">Join the quest</p>
 
       <form onSubmit={handleSubmit} className="w-full space-y-4">

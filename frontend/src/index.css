@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700;800&family=Bangers&display=swap');
 @import "leaflet/dist/leaflet.css";
 @import "tailwindcss";
 
@@ -169,10 +169,29 @@ input:focus, select:focus {
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
 }
 
+/* Login page light theme inputs */
+.login-input {
+  background: #ffffff !important;
+  border: 2px solid rgba(251, 146, 60, 0.5) !important;
+  border-radius: 6px !important;
+  color: #1a1a1a !important;
+}
+
+.login-input:focus {
+  border-color: rgba(251, 146, 60, 0.9) !important;
+  box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.15) !important;
+  outline: none !important;
+}
+
+.login-input::placeholder {
+  color: rgba(0, 0, 0, 0.3) !important;
+}
+
 /* Tap feedback on interactive elements */
 button, a {
   -webkit-tap-highlight-color: transparent;
 }
+
 
 /* Smooth page transitions */
 .page-enter {
