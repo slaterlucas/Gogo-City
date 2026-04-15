@@ -79,9 +79,9 @@ export default function CheckInModal({ task, onClose, onSuccess }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center pb-16">
+    <div className="fixed inset-0 z-[60] flex items-end justify-center">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative bg-white w-full max-w-[430px] border-t-2 border-[var(--color-text)] p-5 max-h-[75vh] overflow-y-auto">
+      <div className="relative bg-white w-full max-w-[430px] border-t-2 border-[var(--color-text)] p-5 pb-8 max-h-[80vh] overflow-y-auto" style={{ marginBottom: 0 }}>
         <button onClick={onClose} className="absolute top-4 right-4 text-[var(--color-text-muted)]">
           <X size={20} />
         </button>
