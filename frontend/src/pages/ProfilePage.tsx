@@ -129,6 +129,13 @@ export default function ProfilePage() {
     }
   };
 
+  const formatAchievementBlurb = (description: string) => {
+    return description
+      .replace(/^Complete\b/i, 'completing')
+      .replace(/^Reach\b/i, 'reaching')
+      .replace(/^Rate\b/i, 'rating');
+  };
+
   if (loading) return <div className="px-4 pt-6 text-center text-xs text-[var(--color-text-muted)] uppercase tracking-widest">Loading...</div>;
 
   return (
@@ -372,7 +379,7 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <p className="text-xs mt-2">
-                    Earn this badge by {selectedAchievement.description}
+                    Earn this badge by {formatAchievementBlurb(selectedAchievement.description)}
                   </p>
                   {!selectedAchievement.unlocked && (
                     <p className="text-[10px] text-[var(--color-text-muted)] mt-1 uppercase tracking-widest">
